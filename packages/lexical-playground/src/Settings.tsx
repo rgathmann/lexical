@@ -29,6 +29,7 @@ export default function Settings(): JSX.Element {
       showNestedEditorTreeView,
       disableBeforeInput,
       showTableOfContents,
+      isNoWrap,
     },
   } = useSettings();
   const [showSettings, setShowSettings] = useState(false);
@@ -131,6 +132,13 @@ export default function Settings(): JSX.Element {
             }}
             checked={showTableOfContents}
             text="Table Of Contents"
+          />
+          <Switch
+            onClick={() => {
+              setOption('isNoWrap', !isNoWrap);
+            }}
+            checked={isNoWrap}
+            text="No Wrap"
           />
         </div>
       ) : null}

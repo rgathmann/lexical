@@ -87,6 +87,7 @@ export default function Editor(): JSX.Element {
       showTreeView,
       showTableOfContents,
       tableCellMerge,
+      isNoWrap,
       tableCellBackgroundColor,
     },
   } = useSettings();
@@ -172,7 +173,7 @@ export default function Editor(): JSX.Element {
               contentEditable={
                 <div className="editor-scroller">
                   <div className="editor" ref={onRef}>
-                    <ContentEditable />
+                    <ContentEditable isNoWrap={isNoWrap} />
                   </div>
                 </div>
               }
@@ -193,7 +194,10 @@ export default function Editor(): JSX.Element {
               <AutoFocusPlugin />
               <RichTextPlugin
                 contentEditable={
-                  <ContentEditable className="TableNode__contentEditable" />
+                  <ContentEditable
+                    className="TableNode__contentEditable"
+                    isNoWrap={isNoWrap}
+                  />
                 }
                 placeholder={null}
                 ErrorBoundary={LexicalErrorBoundary}
@@ -236,7 +240,7 @@ export default function Editor(): JSX.Element {
         ) : (
           <>
             <PlainTextPlugin
-              contentEditable={<ContentEditable />}
+              contentEditable={<ContentEditable isNoWrap={isNoWrap} />}
               placeholder={placeholder}
               ErrorBoundary={LexicalErrorBoundary}
             />

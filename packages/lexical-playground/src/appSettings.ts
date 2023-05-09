@@ -15,6 +15,7 @@ export type SettingName =
   | 'isMaxLength'
   | 'isCharLimitUtf8'
   | 'isAutocomplete'
+  | 'isNoWrap'
   | 'showTreeView'
   | 'showNestedEditorTreeView'
   | 'emptyEditor'
@@ -37,6 +38,7 @@ export const DEFAULT_SETTINGS: Settings = {
   isCharLimitUtf8: false,
   isCollab: false,
   isMaxLength: false,
+  isNoWrap: false,
   isRichText: true,
   measureTypingPerf: false,
   showNestedEditorTreeView: false,

@@ -13,8 +13,16 @@ import * as React from 'react';
 
 export default function LexicalContentEditable({
   className,
+  isNoWrap = false,
 }: {
   className?: string;
+  isNoWrap?: boolean;
 }): JSX.Element {
-  return <ContentEditable className={className || 'ContentEditable__root'} />;
+  return (
+    <ContentEditable
+      className={`${className || 'ContentEditable__root'} ${
+        isNoWrap ? 'ContentEditable__nowrap' : ''
+      }`}
+    />
+  );
 }
