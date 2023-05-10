@@ -82,6 +82,7 @@ function handleTextMutation(
   node: TextNode,
   editor: LexicalEditor,
 ): void {
+  // console.log('textmutatiuon', target, node, editor);
   const domSelection = getDOMSelection(editor._window);
   let anchorOffset = null;
   let focusOffset = null;
@@ -102,6 +103,12 @@ function shouldUpdateTextNodeFromMutation(
   targetDOM: Node,
   targetNode: TextNode,
 ): boolean {
+  // console.log(
+  //   'shouldUpdateTextNodeFromMutation',
+  //   selection,
+  //   targetDOM,
+  //   targetNode,
+  // );
   if ($isRangeSelection(selection)) {
     const anchorNode = selection.anchor.getNode();
     if (
@@ -122,6 +129,8 @@ export function $flushMutations(
   isProcessingMutations = true;
   const shouldFlushTextMutations =
     performance.now() - lastTextEntryTimeStamp > TEXT_MUTATION_VARIANCE;
+
+  // console.log('flushMutations', mutations);
 
   try {
     updateEditor(editor, () => {
@@ -178,6 +187,8 @@ export function $flushMutations(
             const node = getNodeFromDOMNode(addedDOM);
             const parentDOM = addedDOM.parentNode;
 
+            // console.log('childList', addedDOM, node, parentDOM);
+
             if (
               parentDOM != null &&
               addedDOM !== blockCursorElement &&
@@ -193,6 +204,10 @@ export function $flushMutations(
                   possibleTextForFirefoxPaste += possibleText;
                 }
               }
+              // console.log(IS_FIREFOX);
+              // console.log(IS_FIREFOX);
+              // TODO: chrome is adding &nbsp; instead of " " for spaces.
+              // Can we just replace all spaces with &nbsp;?
 
               parentDOM.removeChild(addedDOM);
             }
