@@ -82,7 +82,6 @@ function handleTextMutation(
   node: TextNode,
   editor: LexicalEditor,
 ): void {
-  // console.log('textmutatiuon', target, node, editor);
   const domSelection = getDOMSelection(editor._window);
   let anchorOffset = null;
   let focusOffset = null;
@@ -103,12 +102,6 @@ function shouldUpdateTextNodeFromMutation(
   targetDOM: Node,
   targetNode: TextNode,
 ): boolean {
-  // console.log(
-  //   'shouldUpdateTextNodeFromMutation',
-  //   selection,
-  //   targetDOM,
-  //   targetNode,
-  // );
   if ($isRangeSelection(selection)) {
     const anchorNode = selection.anchor.getNode();
     if (
@@ -129,8 +122,6 @@ export function $flushMutations(
   isProcessingMutations = true;
   const shouldFlushTextMutations =
     performance.now() - lastTextEntryTimeStamp > TEXT_MUTATION_VARIANCE;
-
-  // console.log('flushMutations', mutations);
 
   try {
     updateEditor(editor, () => {
@@ -187,8 +178,6 @@ export function $flushMutations(
             const node = getNodeFromDOMNode(addedDOM);
             const parentDOM = addedDOM.parentNode;
 
-            // console.log('childList', addedDOM, node, parentDOM);
-
             if (
               parentDOM != null &&
               addedDOM !== blockCursorElement &&
@@ -204,10 +193,6 @@ export function $flushMutations(
                   possibleTextForFirefoxPaste += possibleText;
                 }
               }
-              // console.log(IS_FIREFOX);
-              // console.log(IS_FIREFOX);
-              // TODO: chrome is adding &nbsp; instead of " " for spaces.
-              // Can we just replace all spaces with &nbsp;?
 
               parentDOM.removeChild(addedDOM);
             }
@@ -329,7 +314,30 @@ export function flushRootMutations(editor: LexicalEditor): void {
 
   if (observer !== null) {
     const mutations = observer.takeRecords();
-    $flushMutations(editor, mutations, observer);
+
+    // This is a super dirty fix for a bug in Firefox where
+    // if the content editable is set as whitespace: nowrap, then
+    // when the user types a space, three mutations are fired
+    // the first is correct with the character
+
+    const mut0 = mutations[0];
+    const mut1 = mutations[1];
+    const mut2 = mutations[2];
+
+    if (
+      mut0 &&
+      mut1 &&
+      mut2 &&
+      mut0.type === 'characterData' &&
+      mut1.type === 'childList' &&
+      mut2.type === 'characterData' &&
+      mut0.target.textContent &&
+      (mut0.target.textContent || '').endsWith(' ')
+    ) {
+      $flushMutations(editor, mutations.slice(0, 1), observer);
+    } else {
+      $flushMutations(editor, mutations, observer);
+    }
   }
 }
 
